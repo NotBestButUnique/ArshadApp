@@ -48,8 +48,9 @@ jobs:
       - name: Build Tauri exe (x86_64-pc-windows-msvc)
         run: npx @tauri-apps/cli build --target x86_64-pc-windows-msvc
 
-      - name: Upload exe artifact
+      - name: Upload Windows exe
         uses: actions/upload-artifact@v4
         with:
-          name: myapp-windows-exe
-          path: src-tauri/target/release/bundle/**
+          name: taskflow-ai-windows-exe
+          path: |
+            src-tauri/target/**/release/bundle/**
