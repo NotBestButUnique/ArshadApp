@@ -1,19 +1,49 @@
 name: Build Windows EXE
 
-on: [push]
+on:
+  push:
+    branches: ["main"]    # Change if you use a different branch
+  workflow_dispatch:      # Allows manual trigger from GitHub UI
 
 jobs:
   build:
     runs-on: windows-latest
+
     steps:
+      # 1️⃣ Checkout repo
       - uses: actions/checkout@v4
+
+      # 2️⃣ Set up Node.js (version 22+ for Vite)
       - uses: actions/setup-node@v4
         with:
-          node-version: 24
-      - run: npm install
-      - run: npm run build
-      - run: npx tauri build   # or electron-builder
-      - uses: actions/upload-artifact@v4
+          node-version: 22
+
+      # 3️⃣ Install Rust (required by Tauri)
+      - name: Install Rust
+        uses: actions-rs/toolchain@v1
         with:
-          name: windows-exe
-          path: src-tauri/target/release/bundle
+          toolchain: stable
+          override: true
+
+      # 4️⃣ Install Tauri CLI
+      - name: Install Tauri CLI
+        run: cargo install tauri-cli
+
+      # 5️⃣ Install npm dependencies
+      - name: Install Node dependencies
+        run: npm install
+
+      # 6️⃣ Build React app
+      - name: Build React frontend
+        run: npm run build
+
+      # 7️⃣ Build Tauri exe
+      - name: Build Tauri Windows exe
+        run: npx tauri build
+
+      # 8️⃣ Upload exe artifact
+      - name: Upload exe
+        uses: actions/upload-artifact@v4
+        with:
+          name: myapp-windows-exe
+          path: src-tauri/target/release/bundle/msi/
