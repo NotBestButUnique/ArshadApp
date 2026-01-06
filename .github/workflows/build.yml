@@ -10,35 +10,40 @@ jobs:
     runs-on: windows-latest
 
     steps:
+      # 1️⃣ Checkout repo
       - uses: actions/checkout@v4
 
-      # Node.js
+      # 2️⃣ Set Node.js 22+ for Vite
       - uses: actions/setup-node@v4
         with:
           node-version: 22
 
-      # Rust
+      # 3️⃣ Install Rust (required by Tauri)
       - name: Install Rust
         uses: actions-rs/toolchain@v1
         with:
           toolchain: stable
           override: true
 
-      # Install Tauri CLI
+      # 4️⃣ Install Tauri CLI globally
       - name: Install Tauri CLI
         run: cargo install tauri-cli
 
-      # Install dependencies
-      - run: npm install
+      # 5️⃣ Install Node dependencies
+      - name: Install npm dependencies
+        run: npm ci
 
-      # Build React frontend
-      - run: npm run build
+      # 6️⃣ Build React frontend
+      - name: Build React frontend
+        run: npm run build
 
-      # Build Tauri exe
-      - run: npx tauri build
+      # 7️⃣ Build Tauri exe (single exe, no MSI)
+      - name: Build Tauri exe
+        run: npx tauri build --target x86_64-pc-windows-msvc
 
-      # Upload artifact
-      - uses: actions/upload-artifact@v4
+      # 8️⃣ Upload exe artifact
+      - name: Upload exe
+        uses: actions/upload-artifact@v4
         with:
           name: myapp-windows-exe
-          path: src-tauri/target/release/bundle/msi/
+          path: src-tauri/target/release/bundle/

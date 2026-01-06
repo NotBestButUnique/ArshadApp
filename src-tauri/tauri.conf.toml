@@ -1,0 +1,15 @@
+[package]
+productName = "TaskFlow AI"
+version = "1.0.0"
+
+[build]
+beforeBuildCommand = ""
+beforeDevCommand = ""
+distDir = "../dist"
+devPath = "../dist"
+
+[tauri]
+bundle = { identifier = "com.yourcompany.taskflowai" }
+
+[package.windows]
+wix = false
