@@ -1,0 +1,44 @@
+{
+  "name": "taskflow-ai",
+  "version": "1.0.0",
+  "description": "Desktop AI Task Management for Teams",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "dev": "vite",
+    "build": "vite build",
+    "build-desktop": "npm run build && electron-builder"
+  },
+  "author": "TaskFlow Engineering",
+  "license": "MIT",
+  "devDependencies": {
+    "@vitejs/plugin-react": "^5.1.2",
+    "electron": "^31.0.0",
+    "electron-builder": "^24.13.3",
+    "vite": "^7.2.7"
+  },
+  "build": {
+    "appId": "com.taskflow.ai",
+    "productName": "TaskFlow AI",
+    "files": [
+      "dist/**/*",
+      "main.js",
+      "preload.js",
+      "package.json"
+    ],
+    "win": {
+      "target": "portable",
+      "icon": "https://placehold.co/512x512/2563eb/ffffff?text=TF"
+    },
+    "directories": {
+      "output": "dist-desktop"
+    }
+  },
+  "dependencies": {
+    "@google/genai": "^1.34.0",
+    "jwt-decode": "^4.0.0",
+    "lucide-react": "^0.562.0",
+    "react": "^19.2.3",
+    "react-dom": "^19.2.3"
+  }
+}

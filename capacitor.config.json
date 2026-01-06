@@ -1,0 +1,8 @@
+{
+  "appId": "com.taskflow.ai",
+  "appName": "TaskFlow AI",
+  "webDir": "dist",
+  "server": {
+    "androidScheme": "https"
+  }
+}
