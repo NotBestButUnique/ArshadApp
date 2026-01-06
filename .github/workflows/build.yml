@@ -10,40 +10,46 @@ jobs:
     runs-on: windows-latest
 
     steps:
-      # 1️⃣ Checkout repo
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-      # 2️⃣ Set Node.js 22+ for Vite
-      - uses: actions/setup-node@v4
+      - name: Setup Node.js 22.x
+        uses: actions/setup-node@v4
         with:
           node-version: 22
+          cache: "npm"
 
-      # 3️⃣ Install Rust (required by Tauri)
-      - name: Install Rust
+      - name: Cache cargo registry and git
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-cargo-
+
+      - name: Install Rust toolchain (stable)
         uses: actions-rs/toolchain@v1
         with:
           toolchain: stable
           override: true
 
-      # 4️⃣ Install Tauri CLI globally
-      - name: Install Tauri CLI
-        run: cargo install tauri-cli
-
-      # 5️⃣ Install Node dependencies
       - name: Install npm dependencies
         run: npm ci
 
-      # 6️⃣ Build React frontend
-      - name: Build React frontend
+      - name: Ensure Tauri CLI (local) is available
+        # Install locally so npx can find the executable reliably in CI
+        run: npm install --no-save @tauri-apps/cli@latest
+
+      - name: Build frontend (Vite/React)
         run: npm run build
 
-      # 7️⃣ Build Tauri exe (single exe, no MSI)
-      - name: Build Tauri exe
-        run: npx tauri build --target x86_64-pc-windows-msvc
+      - name: Build Tauri exe (x86_64-pc-windows-msvc)
+        run: npx @tauri-apps/cli build --target x86_64-pc-windows-msvc
 
-      # 8️⃣ Upload exe artifact
-      - name: Upload exe
+      - name: Upload exe artifact
         uses: actions/upload-artifact@v4
         with:
           name: myapp-windows-exe
-          path: src-tauri/target/release/bundle/
+          path: src-tauri/target/release/bundle/**
